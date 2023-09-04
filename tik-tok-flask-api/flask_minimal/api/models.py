@@ -1,23 +1,14 @@
-from flask.ext.restful import Resource, Api, marshal_with, fields, abort
-from flask_restful_swagger import swagger
-
-@swagger.model
-class DummyResult(object):
-    """The result of a call to /dummy"""
-    resource_fields = {
-        'dummy': fields.String
-    }
-
-    def __init__(self):
-        self.dummy = "foobar"
+from flask_restful import Resource, Api, fields, abort
+from flask import request
 
 
-@swagger.model
-class HelloResult(object):
-    """The result of a call to /hello"""
-    resource_fields = {
-        'greetings': fields.String
-    }
+class DummyResult(Resource):
+    def get(self):
+        return {"dummy": "test"}
 
-    def __init__(self, name):
-        self.greetings = "Hello {}".format(name)
+
+class HelloResult(Resource):
+    def post(self):
+        json_data = request.get_json(force=True)
+        name = json_data["name"]
+        return {"greetings": "Hello {}".format(name)}

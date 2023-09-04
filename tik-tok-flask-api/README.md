@@ -1,16 +1,9 @@
-Minimal Flask App
-=================
+# Minimal Flask App
 
 Basic template to develop an API with Flask, Flask-RESTful and
 Flask-RESTful-Swagger
 
-Usage
------
-
-Clone the repo:
-
-    git clone https://github.com/bonzanini/flask-api-template
-    cd flask-api-template
+## Usage
 
 Create virtualenv:
 
@@ -30,9 +23,6 @@ Try the endpoints:
 
 Swagger docs available at `http://localhost:5000/api/spec.html`
 
-
-License
--------
+## License
 
 MIT, see LICENSE file
-
