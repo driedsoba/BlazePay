@@ -2,17 +2,16 @@ from flask_restful import Resource, Api, fields, abort, reqparse
 from flask import request
 import json
 import bcrypt
+import uuid
 
 # FIREBASE DEP
 import firebase_admin
 from firebase_admin import credentials, firestore, db
 
 # cred initialization - to comment out
-cred = credentials.Certificate(
-    '/Users/rickywinarko/Documents/GitHub/TikTok/tik-tok-flask-api/credentials.json')
+cred = credentials.Certificate('../tik-tok-flask-api/credentials.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
-
 
 class CreateUser(Resource):
     def post(self):
@@ -41,10 +40,8 @@ class CreateUser(Resource):
                 'email': email,
                 'name': name,
                 'phone': phone,
-                # Store the hashed PIN as a string
                 'hashed_pin': hashed_pin.decode('utf-8'),
-                'salt': salt.decode('utf-8'),  # Store the salt as a string
-                # initializing balance
+                'salt': salt.decode('utf-8'),
                 'balance': {item: 0 for item in currency},
                 'transaction': []
             })
@@ -53,8 +50,6 @@ class CreateUser(Resource):
             return {"error": f"error happened at creating user, {e}"}
 
 # GET API to search for user document id
-
-
 class SearchUser(Resource):
     def get(self):
         try:
@@ -79,8 +74,6 @@ class SearchUser(Resource):
             return {'error': str(e)}, 500
 
 # maybe can add JWT and also take a look at security check/rule via firebase for double layer protection
-
-
 class GetProfile(Resource):
     def get(self):
         try:
@@ -99,13 +92,14 @@ class GetProfile(Resource):
             # Iterate through the query results
             for doc in query:
                 user_data = doc.to_dict()
+                user_id = doc.id
                 hashed_pin = user_data.get('hashed_pin', '')
 
             if bcrypt.checkpw(pin.encode('utf-8'), hashed_pin.encode('utf-8')):
                 # PIN matches, return user data without PIN and salt
                 user_data.pop('hashed_pin', None)
                 user_data.pop('salt', None)
-                return {'message': 'PIN matches, data returned', 'user_data': user_data}, 201
+                return {'message': 'PIN matches, data returned', 'user_data': user_data, 'user_id': user_id}, 201
             else:
                 return {'error': 'Credentials not matched/found'}, 404
         except Exception as e:
@@ -120,6 +114,7 @@ class CreateTransaction(Resource):
             receiver = transaction_parameters['receiver']
             amount = transaction_parameters['amount']
             currency = transaction_parameters['currency'].upper()
+            transaction_id = str(uuid.uuid4())
 
             users_ref = db.collection('users')
             sender_doc = users_ref.document(sender).get()
@@ -131,34 +126,53 @@ class CreateTransaction(Resource):
             if not (currency in sender_doc.get("balance") and currency in receiver_doc.get("balance")):
                 return {'error': 'Sender or receiver does not have the currency selected'}, 404
 
-            sender_transactions_ref = db.collection('transactions')
-            sender_transactions_ref.add({
+            sender_transactions_ref = db.collection('transactions').document(sender+'-'+transaction_id)
+            sender_transactions_ref.set({
+                'transaction_acc': sender,
                 'receiver_user_id': sender,
                 'sender_user_id': receiver,
-                'amount': amount,  # Debit amount is negative
+                'amount': -amount,  # Debit amount is negative
+                'currency': currency,
                 'type': 'credit'
             })
 
-            receiver_transactions_ref = db.collection('transactions')
-            receiver_transactions_ref.add({
-                'receiver_user_id': receiver,
+            receiver_transactions_ref = db.collection('transactions').document(receiver+'-'+transaction_id)
+            receiver_transactions_ref.set({
+                'transaction_acc': receiver,
+                'receiver_user_id': sender,
                 'sender_user_id': receiver,
                 'amount': amount,  # Debit amount is negative
-                'type': 'credit'
+                'currency': currency,
+                'type': 'debit'
             })
+
+            prefix_to_search =[sender, receiver]
+            total_balance={}
+            for prefix in prefix_to_search:
+                print(prefix)
+                query = db.collection('transactions').where("transaction_acc", "==", prefix )
+                total_amount = 0
+                # Execute the query to retrieve matching documents
+                docs = query.stream()
+                # Iterate through the matching documents and access their "amount" field
+                for doc in docs:
+                    data = doc.to_dict()
+                    print(data)
+                    if "amount" in data and data['currency']==currency:
+                        amount = data["amount"]
+                        total_amount += amount
+
+                total_balance[prefix]= total_amount
 
             # Update user balances using double-entry accounting
             sender_balance = sender_doc.get('balance').get(currency)
             receiver_balance = receiver_doc.get('balance').get(currency)
 
-            # if (sender_balance - amount)
+            if total_balance[sender]==sender_balance-amount:
+                sender_doc.reference.update({'balance.' + currency: sender_balance - amount})
 
-            sender_doc.reference.update(
-                {'balance.' + currency: sender_balance - amount})
-
-            # Credit receiver's account
-            receiver_doc.reference.update(
-                {'balance.' + currency: receiver_balance + amount})
+            if total_balance[receiver]==receiver_balance+amount:
+                receiver_doc.reference.update({'balance.' + currency: receiver_balance + amount})
 
             return {'message': 'Transfer transaction created successfully'}, 201
         except Exception as e:
