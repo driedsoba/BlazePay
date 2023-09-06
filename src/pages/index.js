@@ -1,11 +1,11 @@
 import React from 'react';
  
-const Home = () => {
+const index = () => {
     return (
         <div>
-            <h1>Welcome to GeeksforGeeks</h1>
+            <h1>Welcomeee</h1>
         </div>
     );
 };
  
-export default Home;
+export default index;
