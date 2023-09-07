@@ -3,11 +3,10 @@ import './App.css';
 import Navbar from './Navbar';
 import { BrowserRouter as Router, Routes, Route }
     from 'react-router-dom';
-import Home from './pages';
-import Wallet from './pages/home';
 import Transfer from './pages/transfer';
 import User from './pages/user';
-import Financial from './pages/financial';
+import Financial from './pages/finance/financial';
+import Home from './pages/home';
  
 function App() {
     return (
@@ -15,8 +14,8 @@ function App() {
           <Router>
                 <Navbar />
                 <Routes>
-                    <Route exact path='/' element={<Wallet />} />
-                    <Route path='/home' element={<Wallet />} />
+                    <Route exact path='/' element={<Home />} />
+                    <Route path='/home' element={<Home />} />
                     <Route path='/financial' element={<Financial />} />
                     <Route path='/transfer' element={<Transfer />} />
                     <Route path='/user' element={<User />} />

@@ -9,7 +9,7 @@ const Navbar = () => {
             <Nav>
                 <NavMenu>
                     <NavLink to="/home" activeStyle>
-                        My Wallet
+                        Home
                     </NavLink>
                     <NavLink to="/financial" activeStyle>
                         Financial Services

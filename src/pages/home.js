@@ -1,6 +1,6 @@
 import React from "react";
  
-const Wallet = () => {
+const Home = () => {
     return (
         <div>
             <h1>
@@ -10,4 +10,4 @@ const Wallet = () => {
     );
 };
  
-export default Wallet;
+export default Home;
