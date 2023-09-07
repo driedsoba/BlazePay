@@ -9,6 +9,7 @@ api.add_resource(SearchUser, '/searchID')
 api.add_resource(GetProfile, '/profile')
 api.add_resource(CreateTransaction, '/payment')
 api.add_resource(CreateUser, '/newUser')
+api.add_resource(TopUp, '/topUp')
 
 def run_app(*args, **kwargs):
     app.run(*args, **kwargs, port=3000)
