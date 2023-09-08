@@ -23,10 +23,10 @@ function Wallet() {
   // Function to update the balance and total when a transaction is made
   const handleTransaction = (transactionAmount) => {
     // Update the balance
-    setBalance((prevBalance) => prevBalance + transactionAmount);
+    setBalance((prevBalance) => prevBalance - transactionAmount);
     
     // Update the total
-    setTotal((prevTotal) => prevTotal + transactionAmount);
+    setTotal((prevTotal) => prevTotal - transactionAmount);
   };
 
   const handleAmountChange = (e) => {

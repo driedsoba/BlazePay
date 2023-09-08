@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function Home() {
+function Login() {
   const [data, setData] = useState({
     phone: '',
     phoneNumber: '',
@@ -57,4 +57,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Login;
