@@ -18,15 +18,25 @@ const amountStyle = {
 function Wallet() {
   const [total, setTotal] = useState(700);
   const [amount, setAmount] = useState(""); // Initialize user input amount as an empty string
-  const [balance, setBalance] = useState(null);
+  const [balance, setBalance] = useState(700); // Initialize balance to 700
+  const [errorMessage, setErrorMessage] = useState(""); // State for error messages
 
   // Function to update the balance and total when a transaction is made
   const handleTransaction = (transactionAmount) => {
-    // Update the balance
-    setBalance((prevBalance) => prevBalance - transactionAmount);
-    
-    // Update the total
-    setTotal((prevTotal) => prevTotal - transactionAmount);
+    if (transactionAmount <= 0) {
+      setErrorMessage("Amount must be greater than zero.");
+    } else if (transactionAmount > balance) {
+      setErrorMessage("Insufficient balance.");
+    } else {
+      // Clear any previous error messages
+      setErrorMessage("");
+
+      // Update the balance by subtracting the transaction amount
+      setBalance((prevBalance) => prevBalance - transactionAmount);
+
+      // Update the total by subtracting the transaction amount
+      setTotal((prevTotal) => prevTotal - transactionAmount);
+    }
   };
 
   const handleAmountChange = (e) => {
@@ -70,6 +80,7 @@ function Wallet() {
           >
             Transfer
           </button>
+          {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
         </div>
         <Bank />
       </div>
