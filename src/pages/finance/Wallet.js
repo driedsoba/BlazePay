@@ -15,8 +15,9 @@ const amountStyle = {
 };
 
 function Wallet() {
-  const [amount, setAmount] = useState(""); 
-  const [balance, setBalance] = useState(1000); 
+  const [transferAmount, setTransferAmount] = useState("");
+  const [addMoneyAmount, setAddMoneyAmount] = useState("");
+  const [balance, setBalance] = useState(1000);
   const [errorMessage, setErrorMessage] = useState("");
   const [transferComplete, setTransferComplete] = useState(false);
 
@@ -24,7 +25,7 @@ function Wallet() {
     if (transferComplete) {
       const timer = setTimeout(() => {
         setTransferComplete(false);
-      }, 3000); // 4 seconds in milliseconds
+      }, 2000); // 2 seconds in milliseconds
 
       return () => clearTimeout(timer);
     }
@@ -42,18 +43,32 @@ function Wallet() {
     }
   };
 
+  const handleAddMoney = (moneyAmount) => {
+    if (moneyAmount <= 0) {
+      setErrorMessage("Amount must be greater than zero.");
+    } else {
+      setErrorMessage("");
+      updateBalance(moneyAmount);
+    }
+  };
+
   const updateBalance = (amount) => {
     setBalance((prevBalance) => prevBalance + amount);
   };
 
-  const handleAmountChange = (e) => {
-    setAmount(e.target.value);
+  const handleInputChange = (e, type) => {
+    const value = e.target.value;
+    if (type === "transfer") {
+      setTransferAmount(value);
+    } else if (type === "addMoney") {
+      setAddMoneyAmount(value);
+    }
   };
 
   return (
     <MyContext.Provider
       value={{
-        amount,
+        transferAmount,
         balance,
         amountStyle,
         handleTransaction,
@@ -69,22 +84,38 @@ function Wallet() {
             Transfer Amount:
             <input
               type="number"
-              value={amount}
-              onChange={handleAmountChange}
+              value={transferAmount}
+              onChange={(e) => handleInputChange(e, "transfer")}
             />
           </label>
           <button
-            onClick={() => handleTransaction(parseInt(amount))}
-            disabled={!amount || parseInt(amount) <= 0}
+            onClick={() => handleTransaction(parseInt(transferAmount))}
+            disabled={!transferAmount || parseInt(transferAmount) <= 0}
           >
-          Transfer
+            Transfer
           </button>
           {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
           {transferComplete && (
             <p style={{ color: "green" }}>
-              Bank received {parseInt(amount)} from Wallet through Card!
+              Bank received {parseInt(transferAmount)} from Wallet through Card!
             </p>
           )}
+        </div>
+        <div>
+          <label>
+            Add Money:
+            <input
+              type="number"
+              value={addMoneyAmount}
+              onChange={(e) => handleInputChange(e, "addMoney")}
+            />
+          </label>
+          <button
+            onClick={() => handleAddMoney(parseInt(addMoneyAmount))}
+            disabled={!addMoneyAmount || parseInt(addMoneyAmount) <= 0}
+          >
+            Add
+          </button>
         </div>
         <Bank />
       </div>
