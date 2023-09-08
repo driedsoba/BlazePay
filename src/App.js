@@ -6,12 +6,10 @@ import { BrowserRouter as Router, Routes, Route }
 import Transfer from './pages/transfer';
 import User from './pages/user';
 import Financial from './pages/finance/financial';
-import Home from './pages/home';
+import Home from './pages/home/home';
+
 
  
-
-
-
 function App() {
     return (
 
