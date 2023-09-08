@@ -4,7 +4,7 @@ const Home = () => {
     return (
         <div>
             <h1>
-                Wallet Application Underway...
+                Welcome back!
             </h1>
         </div>
     );

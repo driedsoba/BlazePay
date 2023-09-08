@@ -41,6 +41,7 @@ function Wallet() {
           <Total />
           &nbsp;
           &nbsp;
+          &nbsp;
           <Balance />
         </div>
         <h2>Wallet</h2>
