@@ -4,7 +4,7 @@ import Wallet from './Wallet';
 const Financial = () => {
     return (
         <div>
-            <h1>Financial services coming soon...</h1>
+            <h1>Transfer Money</h1>
             <Wallet/>
         </div>
     );

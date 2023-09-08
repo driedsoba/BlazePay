@@ -14,9 +14,6 @@ const Navbar = () => {
                     <NavLink to="/financial" activeStyle>
                         Financial Services
                     </NavLink>
-                    <NavLink to="/transfer" activeStyle>
-                        Transfer
-                    </NavLink>
                     <NavLink to="/user" activeStyle>
                         User Settings
                     </NavLink>
