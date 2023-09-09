@@ -15,7 +15,7 @@ const Navbar = () => {
                         Financial Services
                     </NavLink>
                     <NavLink to="/user" activeStyle>
-                        User Settings
+                        Registration Page
                     </NavLink>
                 </NavMenu>
             </Nav>

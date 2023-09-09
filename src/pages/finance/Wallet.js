@@ -4,10 +4,12 @@ import MyContext from "./MyContext";
 import Bank from "./Bank";
 
 const style = {
-  background: "green",
-  color: "white",
-  padding: "0.5rem",
+  background: "lightblue",
+  color: "black",
+  padding: "0.1rem",
   display: "flex",
+  width: 100,
+  alignitems: "center",
 };
 
 const amountStyle = {
@@ -75,25 +77,40 @@ function Wallet() {
       }}
     >
       <div>
-        <div className="Wallet" style={style}>
-          <Balance />
-        </div>
-        <h2>Wallet</h2>
+        
         <div>
+        <div className="sign-up-container">
+        <h1 style={{ color: 'black', fontFamily:'Oxygen', }}>Payment Status</h1>
+        <h2 style={{ color: 'black', fontFamily:'Segoe Bold' }}>Wallet</h2>
+            <div className="Wallet" style={style}>
+              <Balance />
+            </div>
+            <a>&nbsp;</a>
           <label>
-            Transfer Amount:
-            <input
-              type="number"
-              value={transferAmount}
-              onChange={(e) => handleInputChange(e, "transfer")}
-            />
+            <a style={{ color: '#4760c2' }}>Transfer Amount:&nbsp;</a>
+                <input
+                    type="number"
+                    placeholder="100"
+                    value={transferAmount}
+                    onChange={(e) => handleInputChange(e, "transfer")}
+                />
           </label>
-          <button
+          <button style={{
+                  backgroundColor: '#4760c2',
+                  color: 'white',
+                  borderColor: 'white',
+                  borderTopLeftRadius: 35,
+                  borderTopRightRadius: 35,
+                  borderBottomLeftRadius: 35,
+                  borderBottomRightRadius: 35,
+                  width:  150,
+                }} 
             onClick={() => handleTransaction(parseInt(transferAmount))}
             disabled={!transferAmount || parseInt(transferAmount) <= 0}
           >
             Transfer
           </button>
+
           {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
           {transferComplete && (
             <p style={{ color: "green" }}>
@@ -101,21 +118,35 @@ function Wallet() {
             </p>
           )}
         </div>
+        </div>
+        
         <div>
+        <div className="sign-up-container">
           <label>
-            Add Money:
-            <input
-              type="number"
-              value={addMoneyAmount}
-              onChange={(e) => handleInputChange(e, "addMoney")}
-            />
+            <a style={{ color: '#4760c2' }}>Add Money:&nbsp;</a>
+                <input
+                    type="number"
+                    placeholder="100"
+                    value={addMoneyAmount}
+                    onChange={(e) => handleInputChange(e, "addMoney")}
+                />
           </label>
-          <button
+          <button style={{
+                  backgroundColor: '#4760c2',
+                  color: 'white',
+                  borderColor: 'white',
+                  borderTopLeftRadius: 35,
+                  borderTopRightRadius: 35,
+                  borderBottomLeftRadius: 35,
+                  borderBottomRightRadius: 35,
+                  width:  150,
+                }} 
             onClick={() => handleAddMoney(parseInt(addMoneyAmount))}
             disabled={!addMoneyAmount || parseInt(addMoneyAmount) <= 0}
           >
             Add
           </button>
+        </div>
         </div>
         <Bank />
       </div>

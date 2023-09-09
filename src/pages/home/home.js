@@ -3,19 +3,17 @@ import Login from './login';
 import LoggedIn from './loggedin';
 
 function Home() {
-  const [isLoggedIn, setIsLoggedIn] = useState({
-    phone: '',
-    phoneNumber: '',
-  });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [data, setData]=useState({})
 
   return (
     <div>
         {isLoggedIn ? (
-            <Login />
-        ) : (
             <LoggedIn />
+        ) : (
+            <Login setIsLoggedIn={{setIsLoggedIn}}/>
         )}
-</div>
+    </div>
   );
 }
 
