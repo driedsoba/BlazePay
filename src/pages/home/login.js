@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { getToken, setToken } from "../../helper";
+import { useAuthContext } from "../../context/AuthContext";
 
-function Login({ setIsLoggedIn }) {
+function Login({ setUserData }) {
+  // const { setUserData } = useAuthContext();
   const [data, setData] = useState({
     phone: "",
     pin: "",
@@ -16,7 +19,7 @@ function Login({ setIsLoggedIn }) {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:3000/profile", {
+      const response = await fetch("http://localhost:8000/profile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,7 +33,8 @@ function Login({ setIsLoggedIn }) {
 
       // Handle the response as needed
       const responseData = await response.json();
-      setIsLoggedIn(responseData["access_token"]);
+      setToken(responseData["access_token"]);
+      setUserData(responseData["user_data"]);
       console.log("Response from server:", responseData);
     } catch (error) {
       console.error("Error:", error);

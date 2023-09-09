@@ -4,7 +4,7 @@ import MyContext from "./MyContext";
 function Balance() {
   const value = React.useContext(MyContext);
 
-  return <div className="Balance">Balance: {value.balance}</div>;
+  return;
 }
 
 export default Balance;

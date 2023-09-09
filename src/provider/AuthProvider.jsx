@@ -2,18 +2,41 @@
 
 import React, { useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { getToken, removeToken } from "../helper";
 
 const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState();
-  const [jwt, setJWT] = useState();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleUser = (user) => {
     setUserData(user);
   };
 
-  const handleJWT = (user) => {
-    setJWT(user);
+  const refreshData = async () => {
+    const jwt = getToken();
+    try {
+      const response = await fetch("http://localhost:8000/data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      // Handle the response as needed
+      const responseData = await response.json();
+      setUserData(responseData["user_data"]);
+      console.log("Response from server:", responseData);
+    } catch (error) {
+      console.error("Error:", error);
+      removeToken();
+      window.location.replace("http://localhost:3000/home");
+    }
   };
 
   return (
@@ -21,8 +44,7 @@ const AuthProvider = ({ children }) => {
       value={{
         user: userData,
         setUser: handleUser,
-        jwt: jwt,
-        setJWT: handleJWT,
+        refreshData: refreshData,
         isLoading,
       }}
     >
