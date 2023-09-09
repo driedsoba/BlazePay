@@ -13,7 +13,7 @@ from flask_minimal.helpers import jwt_required_custom
 from flask_jwt_extended import create_access_token, get_jwt_identity
 
 # cred initialization - to comment out
-stripe.api_key = 'sk_test_51NnkabDYjIOWSmdjO2B6ZGZEODYNO35Imq89RFYYJWN6hzY0PVEYc4U4b3Ph7R3fMyQBAsneHwMAsvEJrDUVowNH00Y1sjDiL9'
+stripe.api_key = '[INSERT STRIPE TOKEN]'
 
 
 class CreateUser(Resource):
