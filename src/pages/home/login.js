@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-function Login({setIsLoggedIn}) {
+function Login({ setIsLoggedIn }) {
   const [data, setData] = useState({
-    email: '',
-    phoneNumber: '',
+    phone: "",
+    pin: "",
   });
 
   const handleChange = (e) => {
@@ -16,80 +16,81 @@ function Login({setIsLoggedIn}) {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('/api/your-endpoint', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/profile", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error("Request failed");
       }
 
       // Handle the response as needed
       const responseData = await response.json();
-      setIsLoggedIn(true)
-      console.log('Response from server:', responseData);
+      setIsLoggedIn(responseData["access_token"]);
+      console.log("Response from server:", responseData);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
   return (
     <div>
       <div className="sign-up-container">
-      <h1 style={{ color: 'black', fontFamily:'Oxygen', }}> Log In!</h1>
-          <a style={{ color: '#4760c2' }}>Email Address</a>
-          <input style={{
-            backgroundColor: '#e5f3f7', 
-            color: 'black',
-            width:  200,
+        <h1 style={{ color: "black", fontFamily: "Oxygen" }}> Log In!</h1>
+        <a style={{ color: "#4760c2" }}>Phone Number</a>
+        <input
+          style={{
+            backgroundColor: "#e5f3f7",
+            color: "black",
+            width: 200,
           }}
-            type="text"
-            name="email address"
-            value={data.email}
-            onChange={handleChange}
-            placeholder="Raja@gmail.com"
-          />
-          <a style={{ color: 'grey' }}>Enter Email Address</a>
-      </div>
-        
-      <div>&nbsp;</div>
-       
-      <div className="sign-up-container">
-          <a style={{ color: '#4760c2' }}>Phone Number</a>
-          <input style={{
-            backgroundColor: '#e5f3f7', 
-            color: 'black',
-            width:  200,
-          }}
-            type="text"
-            name="phone number"
-            value={data.phoneNumber}
-            onChange={handleChange}
-            placeholder="83728237"
-          />
-          <a style={{ color: 'grey' }}>Enter Phone Number</a>
+          type="number"
+          name="phone"
+          value={data.phone}
+          onChange={handleChange}
+          placeholder="Phone No."
+        />
 
-          <a>&nbsp;&nbsp;</a>
-          <button style={{
-                  backgroundColor: '#4760c2',
-                  color: 'white',
-                  borderColor: 'white',
-                  borderTopLeftRadius: 35,
-                  borderTopRightRadius: 35,
-                  borderBottomLeftRadius: 35,
-                  borderBottomRightRadius: 35,
-                  width:  150,
-                }} 
-              onClick={handleSubmit}>Submit
+        <a>&nbsp;&nbsp;</a>
+
+        <div className="sign-up-container">
+          <a style={{ color: "#4760c2" }}>Pin</a>
+          <input
+            style={{
+              backgroundColor: "#e5f3f7",
+              color: "black",
+              width: 200,
+            }}
+            type="password"
+            name="pin"
+            value={data.pin}
+            onChange={handleChange}
+            placeholder="Password"
+          />
+        </div>
+
+        <div>&nbsp;</div>
+
+        <button
+          style={{
+            backgroundColor: "#4760c2",
+            color: "white",
+            borderColor: "white",
+            borderTopLeftRadius: 35,
+            borderTopRightRadius: 35,
+            borderBottomLeftRadius: 35,
+            borderBottomRightRadius: 35,
+            width: 150,
+          }}
+          onClick={handleSubmit}
+        >
+          Submit
         </button>
-        
       </div>
-
-      
     </div>
   );
 }
