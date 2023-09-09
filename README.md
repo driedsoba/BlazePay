@@ -278,11 +278,6 @@ The base URL for the API is `http://localhost:8000`.
 
 In case of an error, the response JSON will include an `error` field with an error message.
 
-### License
-
-This API is part of the Blazepay project and is licensed under the MIT License.
-
-
 ## Contribution
 The project was contributed by Victor, Ricky, JunLe, and YinYu
 
