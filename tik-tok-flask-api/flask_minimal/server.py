@@ -24,7 +24,7 @@ api.add_resource(CreateStripePayment, '/stripe')
 api.add_resource(stripe_webhook, '/webhook')
 
 def run_app(*args, **kwargs):
-    app.run(*args, **kwargs, port=3000)
+    app.run(*args, **kwargs, port=8000)
 
 if __name__ == '__main__':
     app.run(debug=True)

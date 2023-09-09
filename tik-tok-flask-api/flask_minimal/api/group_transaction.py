@@ -63,6 +63,7 @@ class CreateGroupTransaction(Resource):
 
             # Create a dictionary to store individual transactions
             transaction_list = {}
+            history = {}
 
             # Add transactions for each member
             for member in members:
@@ -77,9 +78,10 @@ class CreateGroupTransaction(Resource):
                 'amount': amount,  # Debit amount is negative
                 'currency': currency,
                 'transactions': transaction_list,
+                'history': history,
                 'status':False
             })
-            return  {'message': 'Group Payment has been created successfully'}, 201
+            return  {'message': 'Group Payment has been created successfully'}, 200
         except Exception as e:
             return {"error": f"error happened at: {e}"}
         
@@ -100,7 +102,7 @@ class CheckGroupTransaction(Resource):
                 if(sum(distribution.values()))==db.collection('groups').document(group_id).get().get('amount'):
                     group_transactions_ref = db.collection('groups').document(group_id).get()
                     group_transactions_ref.reference.update({"transactions": distribution})
-                    return {'message': 'Group Payment has been updated successfully'}, 201
+                    return {'message': 'Group Payment has been updated successfully'}, 200
                 
                 else:
                     return {'message': 'Sth wrong with distribution'}, 400
@@ -160,16 +162,19 @@ class ProcessGroupPayment(Resource):
             currency = group_doc.get('currency')
             requestor = group_doc.get('requestor')
 
-            print(group_doc.get('members'))
-
             #check for user info
             users_ref = db.collection('users')
             member_doc = users_ref.document(member).get()
             group_transaction = group_doc.get('transactions')
+            history = group_doc.get('history')
 
             member = SearchNumber(member)
             if member in group_doc.get('members'):
-                amount_payable =  group_doc.get('transactions')[member]
+                if group_transaction[member]:
+                    amount_payable =  group_doc.get('transactions')[member]
+                elif history[member]:
+                    return {'error': 'You have paid your part, thank you!'}, 404
+                    
             else: 
                 return {'error': 'You are not in the group'}, 404
             #requestor
@@ -181,12 +186,13 @@ class ProcessGroupPayment(Resource):
             else:
                 pass
 
-            member_transactions_ref = db.collection('transactions').document(member+'-'+transaction_id)
+            member_transactions_ref = db.collection('transactions').document(SearchUser(member)+'-'+transaction_id)
             member_transactions_ref.set({
-                'transaction_acc': member,
+                'group_id': group_id,
+                'transaction_acc': SearchUser(member),
                 'receiver_user_id': requestor,
-                'sender_user_id': member,
-                'amount': amount_payable,  # Debit amount is negative
+                'sender_user_id': SearchUser(member),
+                'amount': -amount_payable,  # Debit amount is negative
                 'currency': currency,
                 'type': 'credit',
                 'mode':'Group',
@@ -195,16 +201,16 @@ class ProcessGroupPayment(Resource):
 
             requestor_transactions_ref = db.collection('transactions').document(requestor+'-'+transaction_id)
             requestor_transactions_ref.set({
-                'transaction_acc': member,
+                'group_id': group_id,
+                'transaction_acc': requestor,
                 'receiver_user_id': requestor,
-                'sender_user_id': member,
+                'sender_user_id': SearchUser(member),
                 'amount': amount_payable,  # Debit amount is negative
                 'currency': currency,
-                'type': 'credit',
+                'type': 'debit',
                 'mode':'Group',
                 'status':False
             })
-
 
             # Update user balances using double-entry accounting
             member_balance = member_doc.get('balance').get(currency)
@@ -217,14 +223,19 @@ class ProcessGroupPayment(Resource):
             # if total_balance[requestor]==requestor_balance+amount:
             requestor_doc.reference.update({'balance.' + currency: requestor_balance + amount_payable})
             requestor_transactions_ref.update({ "status": True})
-
-            group_transaction.pop(member)
-            group_doc.reference.update({"transactions": group_transaction})
+            
+            if member in group_transaction:
+                # Remove the key-value pair from the source dictionary and store it in a variable
+                key_value_pair = [member, group_transaction.pop(member)]
+                
+                # Add the key-value pair to the target dictionary
+                history[key_value_pair[0]] = key_value_pair[1]
+            group_doc.reference.update({"transactions": group_transaction, "history": history})
             if len(group_transaction) == 0:
                 group_doc.reference.update({"status": True})
             # update transaction in transaction collection:
             
-            return {'message': 'I paid my part, thank you'}, 201
+            return {'message': 'I paid my part, thank you'}, 200
 
         except Exception as e:
             return {'error': str(e)}, 500

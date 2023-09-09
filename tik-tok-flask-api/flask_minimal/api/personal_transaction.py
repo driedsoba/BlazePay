@@ -48,7 +48,7 @@ class CreateUser(Resource):
                 'balance': {item: 0 for item in currency},
                 'groups': []
             })
-            return {'message': 'User registered successfully'}, 201
+            return {'message': 'User registered successfully'}, 200
         except Exception as e:
             return {"error": f"error happened at creating user, {e}"}
 
@@ -112,7 +112,7 @@ class GetProfile(Resource):
 
                 #JWT Token
                 access_token = create_access_token(identity=user_id)
-                return {'message': 'PIN matches, data returned', 'user_data': user_data, 'access_token': access_token}, 201
+                return {'message': 'PIN matches, data returned', 'user_data': user_data, 'access_token': access_token}, 200
             else:
                 return {'error': 'Credentials not matched/found'}, 404
         except Exception as e:
@@ -255,7 +255,7 @@ class TopUp(Resource):
 
             # Update user balances using double-entry accounting
 
-            return {'stripe_url': session.url, "sessionId": session["id"]}, 201
+            return {'stripe_url': session.url, "sessionId": session["id"]}, 200
 
         except Exception as e:
             return {'error': str(e)}, 500

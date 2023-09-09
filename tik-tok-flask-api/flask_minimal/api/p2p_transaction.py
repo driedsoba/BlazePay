@@ -75,7 +75,7 @@ class CreateTransaction(Resource):
             prefix_to_search = [sender, receiver]
             total_balance = {}
             for prefix in prefix_to_search:
-                query = db.collection('transactions').where("mode", "!=", "Group" ).where("transaction_acc", "==", prefix )
+                query = db.collection('transactions').where("transaction_acc", "==", prefix )
                 total_amount = 0
                 # Execute the query to retrieve matching documents
                 docs = query.stream()
@@ -103,7 +103,7 @@ class CreateTransaction(Resource):
                     {'balance.' + currency: receiver_balance + amount})
                 receiver_transactions_ref.update({"status": True})
 
-            return {'message': 'Transfer transaction created successfully'}, 201
+            return {'message': 'Transfer transaction created successfully'}, 200
         except Exception as e:
             return {"error": f"error happened at: {e}"}
         
